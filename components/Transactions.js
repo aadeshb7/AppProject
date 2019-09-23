@@ -5,6 +5,8 @@ import {
   FlatList,
   TouchableOpacity,
   StyleSheet,
+  BackHandler,
+  Alert,
 } from 'react-native';
 import Tts from 'react-native-tts';
 
@@ -23,6 +25,14 @@ const products = [
 ];
 
 class ListItem extends React.Component {
+  constructor(props) {
+    super(props);
+    Tts.setDefaultLanguage('en-IE');
+    Tts.addEventListener('tts-start', event => console.log('start', event));
+    Tts.addEventListener('tts-finish', event => console.log('finish', event));
+    Tts.addEventListener('tts-cancel', event => console.log('cancel', event));
+}
+
   render() {
     const { item } = this.props;
 
@@ -48,15 +58,29 @@ class ListItem extends React.Component {
 //var Speech = require('react-native-speech');
 
 class Transactions extends React.Component {
-  state = {
+  state = { 
     products,
   };
 
-  _startHandler() {
-    Tts.speak({
-      text: 'hello world',
-      voice: 'en-US'
-    })
+  onButtonPress(){
+    BackHandler.removeEventListener('hardwareBackPress', this.handleBackButton);
+    // then navigate
+    navigate('Home');
+  }
+  handleBackButton = () => {
+    this.props.navigation.navigate('Home')
+    return true;
+  } 
+  componentDidMount() {
+    BackHandler.addEventListener('hardwareBackPress', this.handleBackButton);
+  }
+  componentWillUnmount() {
+    BackHandler.removeEventListener('hardwareBackPress', this.handleBackButton);
+  }
+
+  startHandler() {
+    //Tts.speak('Currently, your account 0balance is' + (totalBalance.toFixed(2)) + 'pounds. This week, you made' + (totalQuantityPos + totalQuantityNeg) +' transactions. You received '+(totalQuantityPos)+' payments into the account, totaling '+(posBal.toFixed(2))+' pounds. You made '+(totalQuantityNeg)+' payments out of the account, totaling '+(negBal.toFixed(2))+' pounds.')
+    Tts.speak('Your Account balance is 2304.04 Pounds')
   }
 
   render() {
@@ -79,20 +103,20 @@ class Transactions extends React.Component {
     })
 
     return (
-      <View>
-        <View style={{ marginTop: 50, alignSelf: 'center' }}>
+      <View style={{ flex:1, backgroundColor: '#E9E9E9'}}>
+        <View style={{ marginTop: 20, alignSelf: 'center' }}>
           <Text style={{ fontSize: 30 }}>Recent Transactions</Text>
         </View>
-        <View style={{ marginTop: 30, alignSelf: 'center' }}>
-          <Text>Account Balance:</Text>
+        <View style={{ marginTop: 20, alignSelf: 'center' }}>
+          <Text style={{ fontSize: 20 }}>Account Balance:</Text>
         </View>
-        <View style={{ marginTop: 5, alignSelf: 'center' }}>
-          <Text style={{ fontSize: 24 }}>{totalBalance.toFixed(2)}</Text>
+        <View style={{ marginTop: 5, justifyContent: 'center' }}>
+          <Text style={{ fontSize: 30, fontWeight: 'bold', textAlign: 'center' }}>{totalBalance.toFixed(2)}</Text>
         </View>
         <View style={{ marginTop: 5, alignSelf: 'center' }}> 
-          <Text>Weekly Transactions: {totalQuantityPos + totalQuantityNeg}</Text>
+          <Text style={{ fontSize: 20 }}>Weekly Transactions: {totalQuantityPos + totalQuantityNeg}</Text>
         </View>
-        <View style={{ marginTop: 30}}>
+        <View style={{ marginTop: 30, marginLeft: 30}}>
           <FlatList
             data={this.state.products}
             renderItem={({ item, index }) => (
@@ -106,13 +130,13 @@ class Transactions extends React.Component {
         <View style={{ marginTop: 50, width: 200, alignSelf: 'center' }}>
           <TouchableOpacity
             style={styles.button}
-            onPress={this.__startHandler}
+            onPress={this.startHandler}
           >
             <Text style={{ fontSize: 20, textAlign: 'center' }}> Voice Summary </Text>
           </TouchableOpacity>
         </View>
-        <View style={{ marginTop: 50 }}>
-          <Text>
+        <View style={{ marginTop: 40 }}>
+          <Text style={{ fontSize: 16, marginLeft: 5, marginRight: 5, textAlign: 'center' }}>
             Currently, your account balance is {totalBalance.toFixed(2)} pounds.
             This week, you made {totalQuantityPos + totalQuantityNeg} transactions.
             You received {totalQuantityPos} payments into the account, totaling {posBal.toFixed(2)} pounds.
