@@ -31,6 +31,8 @@ target 'AppProject' do
 
   pod 'TextToSpeech', :path => '../node_modules/react-native-tts'
 
+  pod 'react-native-splash-screen', :path => '../node_modules/react-native-splash-screen'
+
   target 'AppProjectTests' do
     inherit! :search_paths
     # Pods for testing
