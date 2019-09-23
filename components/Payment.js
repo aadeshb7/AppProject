@@ -1,15 +1,9 @@
 import React, { Component } from 'react';
-import {
-  StyleSheet,
-  TouchableOpacity,
-  Text,
-  View,
-  TextInput,
-  Alert,
-} from 'react-native'
+import { StyleSheet, TouchableOpacity, Text, View, TextInput, Alert, BackHandler,} from 'react-native'
 import { Dropdown } from 'react-native-material-dropdown';
 import Slider from '@react-native-community/slider';
 import CountDown from 'react-native-countdown-component';
+import HomeScreen from './HomeScreen';
 
 export default class Payment extends Component {
   constructor(props) {
@@ -20,6 +14,33 @@ export default class Payment extends Component {
       sliderValue: 0,
       timerId: 'a',
     };
+  }
+
+  onButtonPress(){
+    BackHandler.removeEventListener('hardwareBackPress', this.handleBackButton);
+    // then navigate
+    navigate('Home');
+  }
+  handleBackButton = () => {
+    Alert.alert(
+      'Cancel Payment?',
+      '', [{
+          text: 'Cancel',
+          style: 'cancel'
+      }, {
+          text: 'OK',
+          onPress: () => this.props.navigation.navigate('Home')
+      }, ], {
+          cancelable: false
+      }
+   )
+   return true;
+ }
+  componentDidMount() {
+    BackHandler.addEventListener('hardwareBackPress', this.handleBackButton);
+  }
+  componentWillUnmount() {
+    BackHandler.removeEventListener('hardwareBackPress', this.handleBackButton);
   }
   
   timesUp = () => {
@@ -32,7 +53,7 @@ export default class Payment extends Component {
           onPress: () => this.setState({ timerId : !this.state.timerId }) },
         {
           text: "Contact Support",
-          onPress: () => console.log("Cancel Pressed") },
+        }
       ],
       { cancelable: false }
     );
@@ -43,7 +64,7 @@ export default class Payment extends Component {
     let recipients = [{value: 'Tom Cruise'}, {value: 'Johnny Depp'}, {value: 'Jane Fonda'}];
 
     return (
-      <View>
+      <View style={{flex:1, backgroundColor: '#E9E9E9'}}>
         <View style={{ marginTop: 50, alignSelf: 'center' }}>
           <Text style={{ fontSize: 30 }}>Account Transfer</Text>
         </View>
@@ -96,7 +117,7 @@ export default class Payment extends Component {
           />
         </View>
         <View style={{ marginTop: 50, width: 130, alignSelf: 'center' }}>
-          <TouchableOpacity style={styles.button}onPress={() => {}}>
+          <TouchableOpacity style={styles.button} onPress={() => this.props.navigation.navigate('Loading')}>
             <Text style={{ fontSize: 20, textAlign: 'center' }}> Submit </Text>
           </TouchableOpacity>
         </View>
